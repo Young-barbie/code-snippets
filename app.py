@@ -1,7 +1,3 @@
-# Update 4 - 2026-11-16 22:19:53
-def retry_task(fn, retries=3):
-    for _ in range(retries):
-        try:
-            return fn()
-        except Exception:
-            pass
+# Update 5 - 2026-11-16 22:35:31
+def calculate_metrics(data):
+    return sum(data) / len(data) if data else 0
