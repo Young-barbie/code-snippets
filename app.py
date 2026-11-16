@@ -23,3 +23,7 @@ def retry_task(fn, retries=3):
             return fn()
         except Exception:
             pass
+
+# Update 5
+def calculate_metrics(data):
+    return sum(data) / len(data) if data else 0
