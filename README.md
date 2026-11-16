@@ -1,9 +1,13 @@
-<!-- Updated: 2026-11-16 23:26:00 -->
+<!-- Created: 2026-11-16 23:37:44 -->
 
 # code-snippets
 
-Automated Python utilities and data-processing helpers.
+Modular Python utilities and data-processing helpers.
 
 ## Modules
-- pp.py: Core metric and batch-processing helpers
-- utils.py: Retry and structured logging utilities
+- metrics.py: Mean and range calculations
+- logger.py: Structured ISO timestamp logging
+- alidator.py: Input type and null-filtering checks
+- atch_processor.py: Safe list chunking
+- etry_handler.py: Configurable retry wrapper
+- cache_store.py: Lightweight in-memory cache
