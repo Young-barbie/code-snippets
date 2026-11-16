@@ -1,9 +1,8 @@
-# Module: logger.py | Created: 2026-11-16 23:29:59
+# Module: logger.py | Created: 2026-11-16 23:36:15
 
 import datetime
 
 def log_event(level: str, message: str) -> str:
-    ts = datetime.datetime.now().isoformat()
-    entry = f'[{ts}] [{level.upper()}] {message}'
+    entry = f'[{datetime.datetime.now().isoformat()}] [{level.upper()}] {message}'
     print(entry)
     return entry
