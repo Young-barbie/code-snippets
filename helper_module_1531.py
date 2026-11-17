@@ -1,5 +1,5 @@
-# Module: helper_module_1531.py | Created: 2026-11-17 16:03:44
+# Module: helper_module_1531.py | Linked Excel Row: 1531 | Score: 76.79
+import csv
 
-def execute_step_1531(payload: dict) -> dict:
-    res = dict(payload); res['step'] = '1531'; res['status'] = 'ok'
-    return res
+def process_step_1531(score: float = 76.79) -> dict:
+    return {'step': '1531', 'score': score, 'status': 'verified'}
