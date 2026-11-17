@@ -1,4 +1,4 @@
-# Module: validator.py | Created: 2026-11-16 23:36:32
+# Module: validator.py | Created: 2026-11-17 06:54:26
 
 def is_non_empty_string(value: object) -> bool:
     return isinstance(value, str) and len(value.strip()) > 0
