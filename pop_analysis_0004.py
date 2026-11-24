@@ -1,6 +1,25 @@
-# Population Projection Model: Rwanda (2029) | Module: pop_analysis_0004.py
-def project_population(base_pop: int = 14250000, rate_pct: float = 3.2, years: int = 3) -> dict:
-    projected = round(base_pop * ((1 + rate_pct / 100) ** years))
-    urban = round(projected * (18.2 / 100))
-    density = round(projected / 26338, 2)
-    return {'region': 'Rwanda', 'year': 2029, 'population': projected, 'urban_pop': urban, 'density_km2': density}
+﻿
+taclass
+class PopulationModel:
+        region: str
+            base_pop: int
+                area_km2: float
+                    growth_pct: float
+                        urban_pct: float
+
+                            def project(self, years: int) -> int:
+                                        return int(round(self.base_pop * ((1.0 + self.growth_pct / 100.0) ** years)))
+
+                                            def urban_pop(self, years: int) -> int:
+                                                        return int(round(self.project(years) * (self.urban_pct / 100.0)))
+
+                                                            def density(self, years: int) -> float:
+                                                                        return round(self.project(years) / self.area_km2, 2)
+
+                                                                        def simulate_0004() -> dict:
+                                                                                m = PopulationModel('Rwanda', 14250000, 26338, 1.56, 18.2)
+                                                                                    return {'region': m.region, 'year': 2040, 'pop': m.project(14), 'urban': m.urban_pop(14), 'density': m.density(14), 'meta': asdict(m)}
+
+                                                                                    if __name__ == '__main__':
+                                                                                            print(json.dumps(simulate_0004(), indent=2))
+                                                                                            
