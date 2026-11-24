@@ -1,6 +1,88 @@
-# Population Projection Model: Kenya (2026) | Module: pop_analysis_0001.py
-def project_population(base_pop: int = 56400000, rate_pct: float = 3.09, years: int = 0) -> dict:
-    projected = round(base_pop * ((1 + rate_pct / 100) ** years))
-    urban = round(projected * (29.5 / 100))
-    density = round(projected / 580367, 2)
-    return {'region': 'Kenya', 'year': 2026, 'population': projected, 'urban_pop': urban, 'density_km2': density}
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Demographic & Population Projection Module: pop_analysis_0001.py
+Target Region : Kenya (2026 - 2037)
+Base Metrics  : Pop=56400000, Area=580367 km2, Growth=1.53%
+"""
+
+from dataclasses import dataclass, asdict
+from typing import List, Dict
+import math
+import json
+
+
+@dataclass
+class RegionDemographics:
+    name: str
+    base_population: int
+    area_km2: float
+    annual_growth_pct: float
+    urban_share_pct: float
+    fertility_rate: float
+    life_expectancy: float
+
+    def population_at_year(self, target_year: int, base_year: int = 2026) -> int:
+        elapsed = max(0, target_year - base_year)
+        growth_factor = (1.0 + (self.annual_growth_pct / 100.0)) ** elapsed
+        return int(round(self.base_population * growth_factor))
+
+    def doubling_time_years(self) -> float:
+        if self.annual_growth_pct <= 0:
+            return float('inf')
+        return round(math.log(2.0) / math.log(1.0 + self.annual_growth_pct / 100.0), 2)
+
+    def density_at_year(self, target_year: int) -> float:
+        pop = self.population_at_year(target_year)
+        return round(pop / self.area_km2, 2)
+
+    def urban_rural_breakdown(self, target_year: int) -> Dict[str, int]:
+        total = self.population_at_year(target_year)
+        urban = int(round(total * (self.urban_share_pct / 100.0)))
+        rural = total - urban
+        return {'total': total, 'urban': urban, 'rural': rural}
+
+    def age_cohort_distribution(self, target_year: int) -> Dict[str, int]:
+        total = self.population_at_year(target_year)
+        youth = int(round(total * 0.39))
+        working_age = int(round(total * 0.56))
+        elderly = total - youth - working_age
+        return {'youth_0_14': youth, 'working_15_64': working_age, 'elderly_65_plus': elderly}
+
+
+def generate_multi_year_forecast(model: RegionDemographics, start: int, end: int) -> List[Dict]:
+    forecast_records: List[Dict] = []
+    for yr in range(start, end + 1):
+        split = model.urban_rural_breakdown(yr)
+        cohorts = model.age_cohort_distribution(yr)
+        forecast_records.append({
+            'year': yr,
+            'population': split['total'],
+            'urban_pop': split['urban'],
+            'rural_pop': split['rural'],
+            'density_km2': model.density_at_year(yr),
+            'working_age_pop': cohorts['working_15_64']
+        })
+    return forecast_records
+
+
+def run_simulation_0001() -> Dict:
+    region = RegionDemographics(
+        name='Kenya',
+        base_population=56400000,
+        area_km2=580367,
+        annual_growth_pct=1.53,
+        urban_share_pct=29.5,
+        fertility_rate=3.28,
+        life_expectancy=63.6
+    )
+    timeline = generate_multi_year_forecast(region, 2026, 2037)
+    summary = timeline[-1]
+    summary['doubling_years'] = region.doubling_time_years()
+    summary['metadata'] = asdict(region)
+    return summary
+
+
+if __name__ == '__main__':
+    result = run_simulation_0001()
+    print(json.dumps(result, indent=2))
