@@ -1,88 +1,32 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Demographic & Population Projection Module: pop_analysis_0001.py
-Target Region : Kenya (2026 - 2037)
-Base Metrics  : Pop=56400000, Area=580367 km2, Growth=1.53%
-"""
-
+﻿# Population Projection Model: Kenya (2026-2037)
 from dataclasses import dataclass, asdict
-from typing import List, Dict
-import math
-import json
-
+import math, json
 
 @dataclass
-class RegionDemographics:
-    name: str
-    base_population: int
+class PopulationModel:
+    region: str
+    base_pop: int
     area_km2: float
-    annual_growth_pct: float
-    urban_share_pct: float
-    fertility_rate: float
-    life_expectancy: float
+    growth_pct: float
+    urban_pct: float
 
-    def population_at_year(self, target_year: int, base_year: int = 2026) -> int:
-        elapsed = max(0, target_year - base_year)
-        growth_factor = (1.0 + (self.annual_growth_pct / 100.0)) ** elapsed
-        return int(round(self.base_population * growth_factor))
+    def project(self, years: int) -> int:
+        return int(round(self.base_pop * ((1.0 + self.growth_pct / 100.0) ** years)))
 
-    def doubling_time_years(self) -> float:
-        if self.annual_growth_pct <= 0:
-            return float('inf')
-        return round(math.log(2.0) / math.log(1.0 + self.annual_growth_pct / 100.0), 2)
+    def urban_pop(self, years: int) -> int:
+        return int(round(self.project(years) * (self.urban_pct / 100.0)))
 
-    def density_at_year(self, target_year: int) -> float:
-        pop = self.population_at_year(target_year)
-        return round(pop / self.area_km2, 2)
+    def density(self, years: int) -> float:
+        return round(self.project(years) / self.area_km2, 2)
 
-    def urban_rural_breakdown(self, target_year: int) -> Dict[str, int]:
-        total = self.population_at_year(target_year)
-        urban = int(round(total * (self.urban_share_pct / 100.0)))
-        rural = total - urban
-        return {'total': total, 'urban': urban, 'rural': rural}
+    def doubling_years(self) -> float:
+        return round(math.log(2.0) / math.log(1.0 + self.growth_pct / 100.0), 2)
 
-    def age_cohort_distribution(self, target_year: int) -> Dict[str, int]:
-        total = self.population_at_year(target_year)
-        youth = int(round(total * 0.39))
-        working_age = int(round(total * 0.56))
-        elderly = total - youth - working_age
-        return {'youth_0_14': youth, 'working_15_64': working_age, 'elderly_65_plus': elderly}
-
-
-def generate_multi_year_forecast(model: RegionDemographics, start: int, end: int) -> List[Dict]:
-    forecast_records: List[Dict] = []
-    for yr in range(start, end + 1):
-        split = model.urban_rural_breakdown(yr)
-        cohorts = model.age_cohort_distribution(yr)
-        forecast_records.append({
-            'year': yr,
-            'population': split['total'],
-            'urban_pop': split['urban'],
-            'rural_pop': split['rural'],
-            'density_km2': model.density_at_year(yr),
-            'working_age_pop': cohorts['working_15_64']
-        })
-    return forecast_records
-
-
-def run_simulation_0001() -> Dict:
-    region = RegionDemographics(
-        name='Kenya',
-        base_population=56400000,
-        area_km2=580367,
-        annual_growth_pct=1.53,
-        urban_share_pct=29.5,
-        fertility_rate=3.28,
-        life_expectancy=63.6
-    )
-    timeline = generate_multi_year_forecast(region, 2026, 2037)
-    summary = timeline[-1]
-    summary['doubling_years'] = region.doubling_time_years()
-    summary['metadata'] = asdict(region)
-    return summary
-
+def simulate_0001() -> dict:
+    m = PopulationModel('Kenya', 56400000, 580367, 3.11, 29.5)
+    total = m.project(11)
+    return {'region': m.region, 'year': 2037, 'pop': total, 'urban': m.urban_pop(11), 'density': m.density(11), 'doubling': m.doubling_years(), 'meta': asdict(m)}
 
 if __name__ == '__main__':
-    result = run_simulation_0001()
-    print(json.dumps(result, indent=2))
+    print(json.dumps(simulate_0001(), indent=2))
+        
