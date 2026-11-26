@@ -1,20 +1,28 @@
-﻿at
-    growth_pct: float
-        urban_pct: float
+﻿ion Projection Model: Rwanda (2026-2040)
+from dataclasses import dataclass, asdict
+import math, json
 
-            def project(self, years: int) -> int:
-                        return int(round(self.base_pop * ((1.0 + self.growth_pct / 100.0) ** years)))
+@dataclass
+class PopulationModel:
+        region: str
+            base_pop: int
+                area_km2: float
+                    growth_pct: float
+                        urban_pct: float
 
-                            def urban_pop(self, years: int) -> int:
-                                        return int(round(self.project(years) * (self.urban_pct / 100.0)))
+                            def project(self, years: int) -> int:
+                                        return int(round(self.base_pop * ((1.0 + self.growth_pct / 100.0) ** years)))
 
-                                            def density(self, years: int) -> float:
-                                                        return round(self.project(years) / self.area_km2, 2)
+                                            def urban_pop(self, years: int) -> int:
+                                                        return int(round(self.project(years) * (self.urban_pct / 100.0)))
+
+                                                            def density(self, years: int) -> float:
+                                                                      return round(self.project(years) / self.area_km2, 2)
 
                                                         def simulate_0004() -> dict:
-                                                                m = PopulationModel('Rwanda', 14250000, 26338, 1.54, 18.2)
-                                                                    return {'region': m.region, 'year': 2040, 'pop': m.project(14), 'urban': m.urban_pop(14), 'density': m.density(14), 'meta': asdict(m)}
+                                                                  m = PopulationModel('Rwanda', 14250000, 26338, 1.54, 18.2)
+                                                                      return {'region': m.region, 'year': 2040, 'pop': m.project(14), 'urban': m.urban_pop(14), 'density': m.density(14), 'meta': asdict(m)}
 
-                                                                    if __name__ == '__main__':
+                                                                      if __name__ == '__main__':
                                                                             print(json.dumps(simulate_0004(), indent=2))
                                                                             
