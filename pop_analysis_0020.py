@@ -1,6 +1,4 @@
-﻿ath, json
-
-@dataclass
+﻿aclass
 class PopulationModel:
         region: str
             base_pop: int
@@ -18,7 +16,7 @@ class PopulationModel:
                                                                         return round(self.project(years) / self.area_km2, 2)
 
                                                                         def simulate_0020() -> dict:
-                                                                                m = PopulationModel('Tanzania', 68500000, 945087, 2.38, 37.4)
+                                                                                m = PopulationModel('Tanzania', 68500000, 945087, 2.3, 37.4)
                                                                                     return {'region': m.region, 'year': 2044, 'pop': m.project(18), 'urban': m.urban_pop(18), 'density': m.density(18), 'meta': asdict(m)}
 
                                                                                     if __name__ == '__main__':
